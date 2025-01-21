@@ -1,0 +1,44 @@
+*.py[cod]
+.*
+!.babelrc
+!.codeclimate.yml
+!.coveragerc
+!.dockerignore
+!.eslintrc.json
+!.flowconfig
+!.github
+!.gitignore
+!.nvmrc
+!.pylintrc
+!.travis*
+!.tx
+*.css
+*.log
+*.pot
+*.pyc
+local_settings.py
+__pycache__/
+build/
+dist/
+*\.egg*
+# data
+/docs/_build/
+/media/
+/node_modules/
+/static/
+/saleor/static/assets/
+webpack-bundle.json
+# *.csv
+#*.ipynb
+*.jpg
+# */migrations/*
+*.sqlite3
+results/
+*/static/
+env/
+venv/
+uploads/
+*.docx
+*.pid
+*.pkl
+
