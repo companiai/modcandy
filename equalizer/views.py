@@ -70,3 +70,15 @@ class AnalyzerProfiler(generics.GenericAPIView):
                 safe=False,
                 status=status.HTTP_400_BAD_REQUEST
             )
+    
+
+class RecentMessage(generics.GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        equalizer_util = EqualizerUtil(debug=False)
+        data = equalizer_util.get_recent_messages()
+        return JsonResponse(
+            data,
+            safe=False,
+            status=status.HTTP_200_OK
+        )

@@ -6,7 +6,7 @@ from decimal import Decimal
 from django.conf import settings
 import re
 from emoji import demojize, emoji_list, emojize
-from equalizer.models import Session, Player, PerspectiveAnalysis, ChatMessage
+from equalizer.models import Session, Player, PerspectiveAnalysis, ChatMessage, ToxicityIncident
 from equalizer.bad_word_matrix import USER_COLOR_MATRIX, EMOJI_BLACK_LIST
 from equalizer.weight_matrix import LOW_WEIGHT_THRESHOLD, HIGH_WEIGHTS, LOWER_WEIGHTS, ATTRIBUTE_LIST, PLAYER_SCORE_FACTOR, \
      TOX_FLAG_THRESHOLD, PLAYER_TOX_MULTIPLIER, PLAYER_MAX_TOX_MULTIPLIER, SPECIAL_CHARACTER_WEIGHT_MULTIPLIER, REPETITION_WEIGHT_MULTIPLIER, REDUCE_PLAYER_TOX_MULTIPLIER, FOUL_PLAY_MAX_MULTIPLIER, MAX_TOX_SCORE_MESSAGE
@@ -161,11 +161,11 @@ class PerspectiveUtil:
                 }
             )
             # filter word list
-            text = self.transform_text(text)
+            transformed_text = self.transform_text(text)
             
             # Fetch Perspective Response
-            perspective_raw = self.get_perspective_raw(text, api_key=settings.PERSPECTIVE_API_KEY)
-            foul_play_weight = self.foul_play_score(text=text)
+            perspective_raw = self.get_perspective_raw(text=transformed_text, api_key=settings.PERSPECTIVE_API_KEY)
+            foul_play_weight = self.foul_play_score(text=transformed_text)
             tox_score, perspective_data = self.calculate_tox_score(perspective_raw=perspective_raw, foul_play_weight=foul_play_weight)
             assigned_tox_score = min(tox_score * player.tox_weight , MAX_TOX_SCORE_MESSAGE) 
             if (tox_score > TOX_FLAG_THRESHOLD):
@@ -178,7 +178,7 @@ class PerspectiveUtil:
                 session.session_tox_score = int((session.session_tox_score + tox_score) * Decimal(0.5) *  player.tox_weight)
                 session.save()
             else:
-                # TODO: may be reduce in pieces?
+                # reduce player tox weight if message is not toxic
                 player.tox_weight = (player.tox_weight/ REDUCE_PLAYER_TOX_MULTIPLIER) if (player.tox_weight/ REDUCE_PLAYER_TOX_MULTIPLIER) > 1.0 else 1.0
                 assigned_tox_score = tox_score * player.tox_weight
             player.save()
@@ -191,6 +191,16 @@ class PerspectiveUtil:
                 assigned_tox_score=assigned_tox_score,
                 flagged=assigned_tox_score > TOX_FLAG_THRESHOLD
             )
+
+            # create Incident if Flagged
+            if chat_message.flagged:
+                ToxicityIncident.objects.create(
+                    chat_message=chat_message,
+                    playerName=player.playerName,
+                    sessionId=sessionId,
+                    tox_type='TOXICITY',
+                    severity='HIGH'
+                )
 
             
 
@@ -234,11 +244,11 @@ class PerspectiveUtil:
         perspective_raw = None
         try:
             # filter word list
-            text = self.transform_text(text)
+            transformed_text = self.transform_text(text)
             
             # Fetch Perspective Response
-            perspective_raw = self.shuffle_perspective_api_key(text)
-            foul_play_weight = self.foul_play_score(text=text)
+            perspective_raw = self.get_perspective_raw(text=transformed_text, api_key=settings.PERSPECTIVE_API_KEY)
+            foul_play_weight = self.foul_play_score(text=transformed_text)
             tox_score, _ = self.calculate_tox_score(perspective_raw=perspective_raw, foul_play_weight=foul_play_weight)
             
             
