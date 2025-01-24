@@ -21,6 +21,7 @@ class Session(models.Model):
 
 class ChatMessage(models.Model):
     player = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='player_chat_message', null=True)
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_chat_message', null=True)
     message = models.CharField(max_length=255, blank=True)
     tox_score = models.IntegerField(default=0)
     assigned_tox_score = models.IntegerField(default=0)
@@ -31,7 +32,24 @@ class ChatMessage(models.Model):
     def __str__(self) -> str:
         if self.player:
             return self.player.playerId
-        return '-'
+        return self.pk
+    
+class ToxicityIncident(models.Model):
+    chat_message = models.ForeignKey(ChatMessage, related_name='message_toxicity_incident', on_delete=models.SET_NULL, null=True)
+    playerName = models.CharField(max_length=50, db_index=True, blank=True)
+    sessionId = models.CharField(max_length=255, unique=True, db_index=True)
+    tox_type = models.CharField(max_length=20, blank=True, db_index=True)
+    severity = models.CharField(max_length=20, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.chat_message.message
+    
+    @property
+    def incident_id(self):
+        return self.pk
+    
     
 
 class PerspectiveAnalysis(models.Model):

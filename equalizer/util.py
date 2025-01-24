@@ -7,6 +7,7 @@ from django.conf import settings
 import pandas as pd
 from equalizer.bad_word_matrix import BAD_WORD_JSON
 from equalizer.models import BadWordShortForm, ChatMessage, Player, PerspectiveAnalysis, Session
+from equalizer.serializers import ChatMessageSerializer
 
 logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ class EqualizerUtil:
     def __init__(self, debug) -> None:
         self.debug = debug
         self.profane_words_file = settings.PROFANE_WORD_CSV_FILE_LOCATION
-        self.tox_analysis_endpoint = settings.TOX_ANALYSIS_ENDPOINT
+        self.tox_analysis_endpoint = settings.BACKEND_DOMAIN + '/api/v1/tox-analysis/'
 
 
     def import_bad_word_csv(self):
@@ -143,6 +144,13 @@ class EqualizerUtil:
         PerspectiveAnalysis.objects.all().delete()
         Player.objects.all().delete()
         Session.objects.all().delete()
+
+
+    def get_recent_messages(self):
+        if self.debug:
+            ipdb.set_trace()
+        chat_messages = ChatMessage.objects.all().order_by('-created')[:10]
+        return ChatMessageSerializer(chat_messages, many=True).data
     
 
 
