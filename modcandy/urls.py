@@ -26,5 +26,7 @@ admin.site.site_title = 'Compani AI'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('account/', include("accounts.urls")),
     path('api/analyzer/', include("equalizer.urls")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
