@@ -27,7 +27,8 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', 'django-insecure-#h#3vquxi*&sz^+k41bpbg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [config('ALLOWED_HOSTS', '*')]
+# ALLOWED_HOSTS = [config('ALLOWED_HOSTS', '*')]
+ALLOWED_HOSTS = ['localhost', 'modcandy-api.compani.ai']
 
 
 # Application definition
@@ -132,30 +133,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     'https://api.compani.ai',
     'https://testnet.compani.ai',
+    'https://modcandy-api.compani.ai',
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-
-
-# Black List and While List related settings
-
-def read_json(filelocation):
-    with open(filelocation) as f:
-        return json.load(f)
-
-
+# Custom Settings
 
 BAD_WORD_JSON_FILE_LOCATION=f"{BASE_DIR}/data/bad_words.json"
 PROFANE_WORD_CSV_FILE_LOCATION=f"{BASE_DIR}/data/profane_word_list.csv"
 
-BAD_WORD_JSON = read_json(BAD_WORD_JSON_FILE_LOCATION)
-
 WHITE_LIST_JSON_FILE_LOCATION=f"{BASE_DIR}/data/white_list.json"
-WHITE_LIST_JSON = read_json(WHITE_LIST_JSON_FILE_LOCATION)
 
 
 # Third Party API Keys
