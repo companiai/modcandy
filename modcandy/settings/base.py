@@ -156,7 +156,7 @@ REST_KNOX = {
   'AUTH_TOKEN_CHARACTER_LENGTH': 64,
   'TOKEN_TTL': timedelta(days=30),
   'USER_SERIALIZER': 'knox.serializers.UserSerializer',
-  'TOKEN_LIMIT_PER_USER': 5,
+  'TOKEN_LIMIT_PER_USER': None,
   'AUTO_REFRESH': False,
 }
 
