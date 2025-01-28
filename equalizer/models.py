@@ -38,8 +38,9 @@ class ChatMessage(models.Model):
     
 class ToxicityIncident(models.Model):
     chat_message = models.ForeignKey(ChatMessage, related_name='message_toxicity_incident', on_delete=models.SET_NULL, null=True)
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_toxicity_incident', null=True)
     playerName = models.CharField(max_length=50, db_index=True, blank=True)
-    sessionId = models.CharField(max_length=255, unique=True, db_index=True)
+    sessionId = models.CharField(max_length=255, blank=True)
     tox_type = models.CharField(max_length=20, blank=True, db_index=True)
     severity = models.CharField(max_length=20, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)

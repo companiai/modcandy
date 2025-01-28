@@ -202,6 +202,7 @@ class PerspectiveUtil:
                 ToxicityIncident.objects.create(
                     chat_message=chat_message,
                     playerName=player.playerName,
+                    session=session,
                     sessionId=sessionId,
                     tox_type='TOXICITY',
                     severity='HIGH'
