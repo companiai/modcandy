@@ -30,7 +30,7 @@ class AnalyzerSimple(generics.GenericAPIView):
         data = JSONParser().parse(request)
         key = request.META["HTTP_AUTHORIZATION"].split()[1]
         api_key = APIKey.objects.get_from_key(key)
-        perspective_util = PerspectiveUtil(debug=True)
+        perspective_util = PerspectiveUtil(debug=False)
         if data.get('text', None):
             data, error = perspective_util.simple_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, debug_mode=True)
             if error:
@@ -64,7 +64,7 @@ class AnalyzerProfiler(generics.GenericAPIView):
         data = JSONParser().parse(request)
         perspective_util = PerspectiveUtil(debug=False)
         if( data.get('playerID', None) and data.get('text', None) and data.get('sessionID', None)):
-            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''))
+            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''), debug_mode=True)
             if error:
                 return JsonResponse(
                     data,
