@@ -1,4 +1,5 @@
 from django.db import models
+from accounts.models import CustomUser
 
 
 class Player(models.Model):
@@ -20,6 +21,7 @@ class Session(models.Model):
 
 
 class ChatMessage(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_chat_message', null=True)
     player = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='player_chat_message', null=True)
     session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_chat_message', null=True)
     message = models.CharField(max_length=255, blank=True)

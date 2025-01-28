@@ -146,10 +146,10 @@ class EqualizerUtil:
         Session.objects.all().delete()
 
 
-    def get_recent_messages(self):
+    def get_recent_messages(self, user):
         if self.debug:
             ipdb.set_trace()
-        chat_messages = ChatMessage.objects.all().order_by('-created')[:10]
+        chat_messages = ChatMessage.objects.filter(user=user).order_by('-created')[:10]
         return ChatMessageSerializer(chat_messages, many=True).data
     
 

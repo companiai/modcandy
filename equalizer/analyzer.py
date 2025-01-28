@@ -152,7 +152,7 @@ class PerspectiveUtil:
     
         # return 80, {"SEVERE_TOXICITY": 0.16960317, "TOXICITY": 0.509388, "THREAT": 0.44942492, "INSULT": 0.31740165, "PROFANITY": 0.26735115, "IDENTITY_ATTACK": 0.047190998, "SEXUALLY_EXPLICIT": 0.35285118}
 
-    def player_tox_score(self, sessionId, playerId, playerName, text, debug_mode=False):
+    def player_tox_score(self, sessionId, playerId, playerName, text, user, debug_mode=False):
         if self.debug:
             ipdb.set_trace()
         perspective_raw = None
@@ -189,6 +189,7 @@ class PerspectiveUtil:
 
             
             chat_message = ChatMessage.objects.create(
+                user=user,
                 player=player,
                 message=text,
                 tox_score=tox_score,
@@ -242,7 +243,7 @@ class PerspectiveUtil:
                 'error': 'Unknown Error',
             }, True
             
-    def simple_tox_score(self, text, debug_mode=False):
+    def simple_tox_score(self, text, user, debug_mode=False):
         if self.debug:
             ipdb.set_trace()
         perspective_raw = None
@@ -257,6 +258,7 @@ class PerspectiveUtil:
             
             
             ChatMessage.objects.create(
+                user=user,
                 message=text,
                 tox_score=tox_score,
                 flagged=tox_score > TOX_FLAG_THRESHOLD
