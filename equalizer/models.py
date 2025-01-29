@@ -37,6 +37,7 @@ class ChatMessage(models.Model):
         return self.pk
     
 class ToxicityIncident(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_toxicity_incident', null=True)
     chat_message = models.ForeignKey(ChatMessage, related_name='message_toxicity_incident', on_delete=models.SET_NULL, null=True)
     session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_toxicity_incident', null=True)
     playerName = models.CharField(max_length=50, db_index=True, blank=True)

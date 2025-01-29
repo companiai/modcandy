@@ -5,7 +5,8 @@ from equalizer.analyzer import PerspectiveUtil
 from equalizer.util import EqualizerUtil
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_api_key.models import APIKey
-
+from equalizer.models import ToxicityIncident
+from equalizer.serializers import IncidentSerializer
 class GetTransformedText(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -93,9 +94,26 @@ class RecentMessage(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         equalizer_util = EqualizerUtil(debug=False)
-        data = equalizer_util.get_recent_messages(user=self.request.user)
+        data = equalizer_util.get_recent_messages(user=request.user)
         return JsonResponse(
             data,
+            safe=False,
+            status=status.HTTP_200_OK
+        )
+    
+class IncidentView(generics.ListAPIView):
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    serializer_class = IncidentSerializer
+
+    def get(self, request, *args, **kwargs):
+        incidents = ToxicityIncident.objects.filter(user=request.user)
+        serializer = self.serializer_class(incidents, many=True)
+        return JsonResponse(
+            serializer.data,
             safe=False,
             status=status.HTTP_200_OK
         )

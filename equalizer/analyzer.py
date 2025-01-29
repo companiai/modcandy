@@ -200,6 +200,7 @@ class PerspectiveUtil:
             # create Incident if Flagged
             if chat_message.flagged:
                 ToxicityIncident.objects.create(
+                    user=user,
                     chat_message=chat_message,
                     playerName=player.playerName,
                     session=session,
