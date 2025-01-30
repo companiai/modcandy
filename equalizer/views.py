@@ -7,6 +7,9 @@ from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_api_key.models import APIKey
 from equalizer.models import ToxicityIncident
 from equalizer.serializers import IncidentSerializer
+from django_filters import rest_framework as filters
+from datetime import datetime
+
 class GetTransformedText(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -101,19 +104,23 @@ class RecentMessage(generics.GenericAPIView):
             status=status.HTTP_200_OK
         )
     
+class ToxicityIncidentFilter(filters.FilterSet):
+    start_date = filters.DateTimeFilter(field_name='created', lookup_expr='gte')
+    end_date = filters.DateTimeFilter(field_name='created', lookup_expr='lte')
+    severity = filters.CharFilter(field_name='severity')
+    type = filters.CharFilter(field_name='tox_type')
+    playerName = filters.CharFilter(field_name='playerName')
+    sessionId = filters.CharFilter(field_name='sessionId')
+    
+    class Meta:
+        model = ToxicityIncident
+        fields = ['start_date', 'end_date', 'severity', 'type', 'playerName', 'sessionId']
+
 class IncidentView(generics.ListAPIView):
-
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
-
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = IncidentSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ToxicityIncidentFilter
 
-    def get(self, request, *args, **kwargs):
-        incidents = ToxicityIncident.objects.filter(user=request.user)
-        serializer = self.serializer_class(incidents, many=True)
-        return JsonResponse(
-            serializer.data,
-            safe=False,
-            status=status.HTTP_200_OK
-        )
+    def get_queryset(self):
+        return ToxicityIncident.objects.filter(user=self.request.user)

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_api_key',
+    'django_filters',
     'knox',
     'corsheaders',
 
@@ -148,6 +149,7 @@ REST_FRAMEWORK = {
         "rest_framework_api_key.permissions.HasAPIKey",
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'PAGE_SIZE': 20
 }
 

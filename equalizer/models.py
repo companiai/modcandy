@@ -19,6 +19,9 @@ class Session(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return self.sessionId
+
 
 class ChatMessage(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_chat_message', null=True)
