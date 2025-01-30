@@ -1,8 +1,6 @@
 from modcandy.settings.base import *
 
 STATIC_URL = '/static/'
-STATIC_ROOT = ''
+STATIC_ROOT = f"{BASE_DIR}/site/static/"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = f'{BASE_DIR}/site/media/'
-
-STATICFILES_DIRS = (f'{BASE_DIR}/site/static/',)

@@ -42,3 +42,4 @@ uploads/
 *.pid
 *.pkl
 
+*/site/*

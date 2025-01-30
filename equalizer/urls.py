@@ -6,4 +6,5 @@ urlpatterns = [
     path('basic', views.AnalyzerSimple.as_view(), name='basic-message-tox-score'),
     path('profile', views.AnalyzerProfiler.as_view(), name='profile-based-tox-score'),
     path('messages/recent', views.RecentMessage.as_view(), name='get-recent-messages'),
+    path('list/incidents', views.IncidentView.as_view(), name='get-incidents'),
 ]

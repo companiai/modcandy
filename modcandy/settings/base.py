@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
-import json
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#h#3vquxi*&sz^+k41bpbg7p6^rkltjdf4&!fzg_leylpy=59b'
+SECRET_KEY = config('DJANGO_SECRET_KEY', 'django-insecure-#h#3vquxi*&sz^+k41bpbg7p6^rkltjdf4&!fzg_leylpy=59b')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'api.compani.ai', 'testnet.compani.ai']
+# ALLOWED_HOSTS = [config('ALLOWED_HOSTS', '*')]
+ALLOWED_HOSTS = ['localhost', 'modcandy-api.compani.ai']
 
 
 # Application definition
@@ -39,6 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'rest_framework_api_key',
+    'django_filters',
+    'knox',
     'corsheaders',
 
     "accounts",
@@ -132,32 +138,43 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     'https://api.compani.ai',
     'https://testnet.compani.ai',
+    'https://modcandy-api.compani.ai',
 ]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication", ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'PAGE_SIZE': 20
+}
+
+REST_KNOX = {
+  'SECURE_HASH_ALGORITHM': 'hashlib.sha512',
+  'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+  'TOKEN_TTL': timedelta(days=30),
+  'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+  'TOKEN_LIMIT_PER_USER': None,
+  'AUTO_REFRESH': False,
+}
+
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-
-
-# Black List and While List related settings
-
-def read_json(filelocation):
-    with open(filelocation) as f:
-        return json.load(f)
-
-
+# Custom Settings
 
 BAD_WORD_JSON_FILE_LOCATION=f"{BASE_DIR}/data/bad_words.json"
 PROFANE_WORD_CSV_FILE_LOCATION=f"{BASE_DIR}/data/profane_word_list.csv"
 
-BAD_WORD_JSON = read_json(BAD_WORD_JSON_FILE_LOCATION)
-
 WHITE_LIST_JSON_FILE_LOCATION=f"{BASE_DIR}/data/white_list.json"
-WHITE_LIST_JSON = read_json(WHITE_LIST_JSON_FILE_LOCATION)
 
 
 # Third Party API Keys
 PERSPECTIVE_API_KEY = config('PERSPECTIVE_API_KEY')
 BACKEND_DOMAIN = config('BACKEND_DOMAIN')
+
+
+BACKEND_NOTIFICATION_SLACK_CHANNEL = config('BACKEND_NOTIFICATION_SLACK_CHANNEL')

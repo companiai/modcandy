@@ -51,11 +51,15 @@ class PerspectiveUtil:
         response_data = response.json()
         return response_data
     
+    # Black List and While List related settings
+
+    def read_json(self, filelocation):
+        with open(filelocation) as f:
+            return json.load(f)
+    
     def transform_text(self, text):
         if self.debug:
             ipdb.set_trace()
-        # with open(settings.BAD_WORD_JSON_FILE_LOCATION) as f:
-        #     word_bag = json.load(f)
 
         # De-Emojise
         emoji_in_text = emoji_list(text)
@@ -67,8 +71,8 @@ class PerspectiveUtil:
                 text = text.replace(emoji_text, EMOJI_BLACK_LIST.get(emoji_text))
 
         words = text.lower().split(' ')
-        bad_words_dict = settings.BAD_WORD_JSON
-        white_list_dict = settings.WHITE_LIST_JSON
+        bad_words_dict = self.read_json(settings.BAD_WORD_JSON_FILE_LOCATION)
+        white_list_dict = self.read_json(settings.WHITE_LIST_JSON_FILE_LOCATION)
         
         for i,w in enumerate(words):
             if w.strip() in USER_COLOR_MATRIX:
@@ -148,7 +152,7 @@ class PerspectiveUtil:
     
         # return 80, {"SEVERE_TOXICITY": 0.16960317, "TOXICITY": 0.509388, "THREAT": 0.44942492, "INSULT": 0.31740165, "PROFANITY": 0.26735115, "IDENTITY_ATTACK": 0.047190998, "SEXUALLY_EXPLICIT": 0.35285118}
 
-    def player_tox_score(self, sessionId, playerId, playerName, text, debug_mode=False):
+    def player_tox_score(self, sessionId, playerId, playerName, text, user, debug_mode=False):
         if self.debug:
             ipdb.set_trace()
         perspective_raw = None
@@ -185,6 +189,7 @@ class PerspectiveUtil:
 
             
             chat_message = ChatMessage.objects.create(
+                user=user,
                 player=player,
                 message=text,
                 tox_score=tox_score,
@@ -195,8 +200,10 @@ class PerspectiveUtil:
             # create Incident if Flagged
             if chat_message.flagged:
                 ToxicityIncident.objects.create(
+                    user=user,
                     chat_message=chat_message,
                     playerName=player.playerName,
+                    session=session,
                     sessionId=sessionId,
                     tox_type='TOXICITY',
                     severity='HIGH'
@@ -238,7 +245,7 @@ class PerspectiveUtil:
                 'error': 'Unknown Error',
             }, True
             
-    def simple_tox_score(self, text, debug_mode=False):
+    def simple_tox_score(self, text, user, debug_mode=False):
         if self.debug:
             ipdb.set_trace()
         perspective_raw = None
@@ -253,6 +260,7 @@ class PerspectiveUtil:
             
             
             ChatMessage.objects.create(
+                user=user,
                 message=text,
                 tox_score=tox_score,
                 flagged=tox_score > TOX_FLAG_THRESHOLD
