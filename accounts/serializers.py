@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import CustomUser, UserAPIKey
+from accounts.models import CustomUser, UserAPIKey, UserCreditUsage
 
 
 
@@ -26,3 +26,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(
             email=validate_data['email'], password=validate_data['password'], username=validate_data['email'])
         return user
+    
+class UserCreditUsageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCreditUsage
+        fields = ['credit_used', 'credit_remaining', 'username']

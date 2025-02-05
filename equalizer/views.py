@@ -43,6 +43,7 @@ class AnalyzerSimple(generics.GenericAPIView):
                     safe=False,
                     status=status.HTTP_200_OK
                 )
+            api_key.user_rest_key.user.user_credit.update_credit_usage(1)
             return JsonResponse(
                 data,
                 safe=False,
@@ -75,6 +76,7 @@ class AnalyzerProfiler(generics.GenericAPIView):
                     safe=False,
                     status=status.HTTP_200_OK
                 )
+            api_key.user_rest_key.user.user_credit.update_credit_usage(1)
             return JsonResponse(
                 data,
                 safe=False,

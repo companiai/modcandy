@@ -2,9 +2,7 @@
 
 # ModCandy
 
-ModCandy is a powerful open-source tool designed by [Compani AI](https://compani.ai) to help businesses moderate user-generated content across various platforms, including social media, gaming, e-commerce, and more. It provides both a basic Version and a profiled Version for analyzing the toxicity of messages and interactions in real-time. The API uses advanced algorithms to score messages based on their level of toxicity, providing a seamless way to flag and moderate harmful content automatically.
-
-To learn more about the API, check out the [documentation 📕](https://docs.compani.ai/).
+Modcandy is a powerful open-source tool designed by [Compani AI](https://compani.ai) to help businesses moderate user-generated content across various platforms, including social media, gaming, e-commerce, and more. It provides both a basic Version and a profiled Version for analyzing the toxicity of messages and interactions in real-time. The API uses advanced algorithms to score messages based on their level of toxicity, providing a seamless way to flag and moderate harmful content automatically.
 
 
 # Quick Start
@@ -21,13 +19,18 @@ And don't forget to create `.env` file and [Perspective API Key](https://perspec
 ```bash
 PERSPECTIVE_API_KEY=12345678
 ```
+For frontend setup, checkout [modcandy-frontend](https://github.com/companiai/modcandy-frontend)
+
+If you wish to use online version, please visit app at [Modcandy](https://modcandy.compani.ai/)
+
+To learn more about the API, check out the [documentation 📕](https://docs.compani.ai/).
 
 ## Roadmap
 - [✔] Perspective Integration with fix-weight algorithm
-- [✔] Custom blacklist and whitelist
-- [ ] Docker version  
-- [ ] Dashboard for reports and stats  
-- [ ] Easy pipeline for training variable weights with custom dataset
+- [✔] Custom blacklist and whitelist 
+- [✔] Basic Dashboard with Login/Signup, API Keymanagement and Logs
+- [ ] Docker version for quick local setup
+- [ ] Pipeline for training variable weights with custom dataset
 - [ ] Agentic AI Moderation System for contextual analysis
 - [ ] Custom Machine Learning model by Compani AI
 - [ ] Fine-tune the model for better performance
