@@ -9,7 +9,8 @@ from emoji import demojize, emoji_list, emojize
 from equalizer.models import Session, Player, PerspectiveAnalysis, ChatMessage, ToxicityIncident
 from equalizer.bad_word_matrix import USER_COLOR_MATRIX, EMOJI_BLACK_LIST
 from equalizer.weight_matrix import LOW_WEIGHT_THRESHOLD, HIGH_WEIGHTS, LOWER_WEIGHTS, ATTRIBUTE_LIST, PLAYER_SCORE_FACTOR, \
-     TOX_FLAG_THRESHOLD, PLAYER_TOX_MULTIPLIER, PLAYER_MAX_TOX_MULTIPLIER, SPECIAL_CHARACTER_WEIGHT_MULTIPLIER, REPETITION_WEIGHT_MULTIPLIER, REDUCE_PLAYER_TOX_MULTIPLIER, FOUL_PLAY_MAX_MULTIPLIER, MAX_TOX_SCORE_MESSAGE
+     TOX_FLAG_THRESHOLD, PLAYER_TOX_MULTIPLIER, PLAYER_MAX_TOX_MULTIPLIER, SPECIAL_CHARACTER_WEIGHT_MULTIPLIER, REPETITION_WEIGHT_MULTIPLIER, \
+     REDUCE_PLAYER_TOX_MULTIPLIER, FOUL_PLAY_MAX_MULTIPLIER, MAX_TOX_SCORE_MESSAGE, TOX_FLAG_HIGH_THRESHOLD
 
 
 logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
@@ -151,6 +152,11 @@ class PerspectiveUtil:
         return min(tox_score, MAX_TOX_SCORE_MESSAGE), summarized_data
     
         # return 80, {"SEVERE_TOXICITY": 0.16960317, "TOXICITY": 0.509388, "THREAT": 0.44942492, "INSULT": 0.31740165, "PROFANITY": 0.26735115, "IDENTITY_ATTACK": 0.047190998, "SEXUALLY_EXPLICIT": 0.35285118}
+    
+    def get_toxicity_type(self, data):
+        data.pop('TOXICITY')
+        max_key = max(data, key=data.get)
+        return max_key
 
     def player_tox_score(self, sessionId, playerId, playerName, text, user, debug_mode=False):
         if self.debug:
@@ -186,36 +192,36 @@ class PerspectiveUtil:
                 player.tox_weight = (player.tox_weight/ REDUCE_PLAYER_TOX_MULTIPLIER) if (player.tox_weight/ REDUCE_PLAYER_TOX_MULTIPLIER) > 1.0 else 1.0
                 assigned_tox_score = tox_score * player.tox_weight
             player.save()
-
             
             chat_message = ChatMessage.objects.create(
                 user=user,
                 player=player,
+                session=session,
                 message=text,
                 tox_score=tox_score,
                 assigned_tox_score=assigned_tox_score,
                 flagged=assigned_tox_score > TOX_FLAG_THRESHOLD
             )
 
+            # optional I guess
+            PerspectiveAnalysis.objects.create(
+                chat_message=chat_message,
+                raw_data = json.dumps(perspective_data),
+            )
+
             # create Incident if Flagged
             if chat_message.flagged:
+
                 ToxicityIncident.objects.create(
                     user=user,
                     chat_message=chat_message,
                     playerName=player.playerName,
                     session=session,
                     sessionId=sessionId,
-                    tox_type='TOXICITY',
-                    severity='HIGH'
+                    tox_type=self.get_toxicity_type(data=perspective_data),
+                    severity='HIGH' if chat_message.assigned_tox_score > TOX_FLAG_HIGH_THRESHOLD else 'LOW'
                 )
 
-            
-
-            # optional I guess
-            PerspectiveAnalysis.objects.create(
-                chat_message=chat_message,
-                raw_data = json.dumps(perspective_data),
-            )
             if debug_mode:
                 return {
                     'flagged': chat_message.assigned_tox_score > TOX_FLAG_THRESHOLD,

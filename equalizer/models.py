@@ -37,7 +37,7 @@ class ChatMessage(models.Model):
     def __str__(self) -> str:
         if self.player:
             return self.player.playerId
-        return self.pk
+        return self.message
     
 class ToxicityIncident(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_toxicity_incident', null=True)
