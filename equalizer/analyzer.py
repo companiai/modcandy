@@ -155,6 +155,7 @@ class PerspectiveUtil:
     
     def get_toxicity_type(self, data):
         data.pop('TOXICITY')
+        data.pop('SEVERE_TOXICITY')
         max_key = max(data, key=data.get)
         return max_key
 
