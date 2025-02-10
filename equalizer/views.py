@@ -9,6 +9,7 @@ from equalizer.models import ToxicityIncident
 from equalizer.serializers import IncidentSerializer
 from django_filters import rest_framework as filters
 from datetime import datetime
+from rest_framework.pagination import PageNumberPagination
 
 class GetTransformedText(generics.GenericAPIView):
 
@@ -134,11 +135,21 @@ class ToxicityIncidentFilter(filters.FilterSet):
         model = ToxicityIncident
         fields = ['start_date', 'end_date', 'severity', 'type', 'playerName', 'sessionId']
 
+class HTTPSPagination(PageNumberPagination):
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        if response.data.get('next'):
+            response.data['next'] = response.data['next'].replace('http:', 'https:')
+        if response.data.get('previous'):
+            response.data['previous'] = response.data['previous'].replace('http:', 'https:')
+        return response
+
 class IncidentView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = IncidentSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ToxicityIncidentFilter
+    pagination_class = HTTPSPagination
 
     def get_queryset(self):
         return ToxicityIncident.objects.filter(user=self.request.user)
