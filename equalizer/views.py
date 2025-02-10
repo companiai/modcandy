@@ -106,6 +106,22 @@ class RecentMessage(generics.GenericAPIView):
             status=status.HTTP_200_OK
         )
     
+class SessionMessage(generics.GenericAPIView):
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get(self, request, *args, **kwargs):
+        equalizer_util = EqualizerUtil(debug=False)
+        data = equalizer_util.get_session_messages(user=request.user, sessionid=kwargs.get('sessionid'))
+        return JsonResponse(
+            data,
+            safe=False,
+            status=status.HTTP_200_OK
+        )
+
+    
 class ToxicityIncidentFilter(filters.FilterSet):
     start_date = filters.DateTimeFilter(field_name='created', lookup_expr='gte')
     end_date = filters.DateTimeFilter(field_name='created', lookup_expr='lte')

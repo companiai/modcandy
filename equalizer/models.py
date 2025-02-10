@@ -39,6 +39,18 @@ class ChatMessage(models.Model):
             return self.player.playerId
         return self.message
     
+    @property
+    def player_name(self):
+        if self.player:
+            return self.player.playerName
+        return '-'
+    
+    @property
+    def session_id(self):
+        if self.session:
+            return self.session.sessionId
+        return '-'
+    
 class ToxicityIncident(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_toxicity_incident', null=True)
     chat_message = models.ForeignKey(ChatMessage, related_name='message_toxicity_incident', on_delete=models.SET_NULL, null=True)
@@ -56,6 +68,10 @@ class ToxicityIncident(models.Model):
     @property
     def incident_id(self):
         return self.pk
+    
+    @property
+    def message(self):
+        return self.chat_message.message
     
     
 

@@ -152,6 +152,32 @@ class EqualizerUtil:
         chat_messages = ChatMessage.objects.filter(user=user).order_by('-created')[:10]
         return ChatMessageSerializer(chat_messages, many=True).data
     
+    def get_session_messages(self, user, sessionid):
+        if self.debug:
+            ipdb.set_trace()
+        chat_messages = ChatMessage.objects.filter(user=user, session=Session.objects.get(sessionId=sessionid)).order_by('-created')
+        return ChatMessageSerializer(chat_messages, many=True).data
+    
+
+    def analyze_csv(self, csv_file_location, api_key, api_endpoint, delay=1):
+        if self.debug:
+            ipdb.set_trace()
+        df = pd.read_csv(csv_file_location)
+        for _, row in df.iterrows():
+            payload = json.dumps({
+                "text": row['Message'],
+                "playerID": row['UserID'],
+                "sessionID": row['SessionID'],
+                "playerName": row['User Name']
+                })
+            headers = {
+                'Authorization': f'Api-Key {api_key}',
+                'Content-Type': 'application/json'
+            }
+            response = requests.request("POST", api_endpoint, headers=headers, data=payload)
+            print(response.json())
+            time.sleep(delay)
+    
 
 
 
