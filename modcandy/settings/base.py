@@ -143,6 +143,11 @@ CSRF_TRUSTED_ORIGINS = [
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+# Force HTTPS in URLs
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PROTO = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication", ),
     "DEFAULT_PERMISSION_CLASSES": [
@@ -150,7 +155,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'PAGE_SIZE': 20
+    'PAGE_SIZE': 10
 }
 
 REST_KNOX = {
