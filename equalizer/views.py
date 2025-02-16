@@ -71,7 +71,7 @@ class AnalyzerProfiler(generics.GenericAPIView):
         data = JSONParser().parse(request)
         perspective_util = PerspectiveUtil(debug=False)
         if( data.get('playerID', None) and data.get('text', None) and data.get('sessionID', None)):
-            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''), debug_mode=False)
+            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''), debug_mode=True)
             if error:
                 return JsonResponse(
                     data,
