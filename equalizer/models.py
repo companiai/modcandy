@@ -4,25 +4,31 @@ from accounts.models import CustomUser
 
 class Player(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_player', null=True)
-    playerId = models.CharField(max_length=50, unique=True, db_index=True)
+    playerId = models.CharField(max_length=50, db_index=True)
     playerName = models.CharField(max_length=50, db_index=True, blank=True)
     player_tox_score = models.IntegerField(default=0)
     tox_weight = models.DecimalField(decimal_places=5, max_digits=8, default=1)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('user', 'playerId')
+
     def __str__(self) -> str:
         return self.playerId
     
 class Session(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_session', null=True)
-    sessionId = models.CharField(max_length=255, unique=True, db_index=True)
+    sessionId = models.CharField(max_length=255, db_index=True)
     session_tox_score = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.sessionId
+    
+    class Meta:
+        unique_together = ('user', 'sessionId')
 
 
 class ChatMessage(models.Model):
