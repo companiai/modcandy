@@ -11,6 +11,7 @@ from django_filters import rest_framework as filters
 from datetime import datetime
 from rest_framework.pagination import PageNumberPagination
 from django.db import models
+from django.conf import settings
 
 class GetTransformedText(generics.GenericAPIView):
 
@@ -71,7 +72,7 @@ class AnalyzerProfiler(generics.GenericAPIView):
         data = JSONParser().parse(request)
         perspective_util = PerspectiveUtil(debug=False)
         if( data.get('playerID', None) and data.get('text', None) and data.get('sessionID', None)):
-            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''), debug_mode=True)
+            data, error = perspective_util.player_tox_score(text=data.get('text'), user=api_key.user_rest_key.user, playerId=data.get('playerID'), sessionId=data.get('sessionID'), playerName=data.get('playerName', ''), debug_mode=settings.DEBUG_MODE)
             if error:
                 return JsonResponse(
                     data,
