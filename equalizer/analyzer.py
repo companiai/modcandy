@@ -164,8 +164,9 @@ class PerspectiveUtil:
             ipdb.set_trace()
         perspective_raw = None
         try:
-            session, _ = Session.objects.get_or_create(sessionId=sessionId)
+            session, _ = Session.objects.get_or_create(user=user, sessionId=sessionId)
             player, _ = Player.objects.update_or_create(
+                user=user,
                 playerId=playerId,
                 defaults={
                     'playerName': playerName

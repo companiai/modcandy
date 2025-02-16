@@ -8,4 +8,6 @@ urlpatterns = [
     path('messages/recent', views.RecentMessage.as_view(), name='get-recent-messages'),
     path('messages/session/<str:sessionid>', views.SessionMessage.as_view(), name='get-session-messages'),
     path('list/incidents', views.IncidentView.as_view(), name='get-incidents'),
+    path('stats/players', views.PlayerStatsView.as_view(), name='player-stats'),
+    path('stats/players/<str:player_id>/incidents', views.PlayerIncidentsView.as_view(), name='player-incidents'),
 ]
