@@ -1,5 +1,5 @@
 from django.contrib import admin
-from equalizer.models import Player, Session, ChatMessage, PerspectiveAnalysis, BadWordShortForm, ToxicityIncident
+from equalizer.models import Player, Session, ChatMessage, PerspectiveAnalysis, BadWordShortForm, FlaggedMessage
 
 # Register your models here.
 class CustomReadOnlyAdmin(admin.ModelAdmin):
@@ -51,4 +51,4 @@ admin.site.register(Session, SessionAdmin)
 admin.site.register(ChatMessage, ChatMessageAdmin)
 admin.site.register(PerspectiveAnalysis, CustomReadOnlyAdmin)
 admin.site.register(BadWordShortForm, BadWordListAdmin)
-admin.site.register(ToxicityIncident, CustomReadOnlyAdmin)
+admin.site.register(FlaggedMessage, CustomReadOnlyAdmin)

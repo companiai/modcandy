@@ -1,4 +1,4 @@
-from equalizer.models import ChatMessage, ToxicityIncident
+from equalizer.models import ChatMessage, FlaggedMessage
 from rest_framework import serializers
 
 class ChatMessageSerializer(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class ChatMessageSerializer(serializers.ModelSerializer):
         fields = ['id', 'message', 'player_name', 'session_id', 'assigned_tox_score', 'flagged', 'created']
 
 
-class IncidentSerializer(serializers.ModelSerializer):
+class FlaggedMessageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ToxicityIncident
-        fields = ['incident_id', 'playerName', 'sessionId', 'tox_type', 'message', 'severity', 'created', ]
+        model = FlaggedMessage
+        fields = ['id', 'playerName', 'sessionId', 'tox_type', 'message', 'severity', 'created', ]

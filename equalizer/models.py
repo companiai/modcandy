@@ -59,10 +59,10 @@ class ChatMessage(models.Model):
             return self.session.sessionId
         return '-'
     
-class ToxicityIncident(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_toxicity_incident', null=True)
-    chat_message = models.ForeignKey(ChatMessage, related_name='message_toxicity_incident', on_delete=models.SET_NULL, null=True)
-    session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_toxicity_incident', null=True)
+class FlaggedMessage(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, related_name='user_flagged_message', null=True)
+    chat_message = models.ForeignKey(ChatMessage, related_name='message_flagged_message', on_delete=models.SET_NULL, null=True)
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, related_name='session_flagged_message', null=True)
     playerName = models.CharField(max_length=50, db_index=True, blank=True)
     sessionId = models.CharField(max_length=255, blank=True)
     tox_type = models.CharField(max_length=20, blank=True, db_index=True)
@@ -74,13 +74,12 @@ class ToxicityIncident(models.Model):
         return self.chat_message.message
     
     @property
-    def incident_id(self):
+    def flagged_message_id(self):
         return self.pk
     
     @property
     def message(self):
         return self.chat_message.message
-    
     
 
 class PerspectiveAnalysis(models.Model):

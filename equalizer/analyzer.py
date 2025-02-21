@@ -6,7 +6,7 @@ from decimal import Decimal
 from django.conf import settings
 import re
 from emoji import demojize, emoji_list, emojize
-from equalizer.models import Session, Player, PerspectiveAnalysis, ChatMessage, ToxicityIncident
+from equalizer.models import Session, Player, PerspectiveAnalysis, ChatMessage, FlaggedMessage
 from equalizer.bad_word_matrix import USER_COLOR_MATRIX, EMOJI_BLACK_LIST
 from equalizer.weight_matrix import LOW_WEIGHT_THRESHOLD, HIGH_WEIGHTS, LOWER_WEIGHTS, ATTRIBUTE_LIST, PLAYER_SCORE_FACTOR, \
      TOX_FLAG_THRESHOLD, PLAYER_TOX_MULTIPLIER, PLAYER_MAX_TOX_MULTIPLIER, SPECIAL_CHARACTER_WEIGHT_MULTIPLIER, REPETITION_WEIGHT_MULTIPLIER, \
@@ -214,7 +214,7 @@ class PerspectiveUtil:
             # create Incident if Flagged
             if chat_message.flagged:
 
-                ToxicityIncident.objects.create(
+                FlaggedMessage.objects.create(
                     user=user,
                     chat_message=chat_message,
                     playerName=player.playerName,
